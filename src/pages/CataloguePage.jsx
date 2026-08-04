@@ -13,7 +13,7 @@ export default function CataloguePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  //LẤY CẢ addToBasket VÀ items TỪ USEBASKET
+  // LẤY CẢ addToBasket VÀ items TỪ USEBASKET
   const { addToBasket, items } = useBasket();
 
   // States quản lý Bộ lọc / Tìm kiếm / Sắp xếp

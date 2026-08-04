@@ -1,9 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // ✅ Đảm bảo đã import Link
+import { Link, useNavigate } from 'react-router-dom';
 import { useBasket } from '../context/BasketContext';
 
 export default function BasketPage() {
   const { items, itemCount, removeFromBasket, clearBasket, submitBasket } = useBasket();
+  const navigate = useNavigate();
 
   const handleSubmitEnrolment = async () => {
     if (items.length === 0) return;
@@ -11,6 +12,7 @@ export default function BasketPage() {
     const result = await submitBasket();
     if (result.success) {
       alert('Đăng ký khóa học thành công! Giỏ hàng đã được làm rỗng.');
+      navigate('/my-enrolments');
     } else {
       alert(`Đăng ký thất bại: ${result.error || 'Có lỗi xảy ra'}`);
     }
@@ -20,18 +22,14 @@ export default function BasketPage() {
     <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
       <h2>Giỏ đăng ký khóa học ({itemCount})</h2>
 
-      {/* GIỎ HÀNG TRỐNG */}
       {items.length === 0 ? (
         <div style={{ padding: '32px', textAlign: 'center', background: '#f9fafb', borderRadius: '8px', border: '1px solid #e5e7eb', marginTop: '16px' }}>
           <p style={{ fontSize: '18px', marginBottom: '12px', color: '#4b5563' }}>Giỏ hàng của bạn đang trống.</p>
-          
-          {/* ✅ SỬA TẠI ĐÂY: Dùng Link thay cho <a> và trỏ về /courses */}
           <Link to="/courses" style={{ color: '#2563eb', fontWeight: 'bold', textDecoration: 'underline' }}>
             Quay lại danh mục để chọn khóa học
           </Link>
         </div>
       ) : (
-        /* GIỮ NGUYÊN PHẦN CÒN LẠI CỦA GIỎ HÀNG... */
         <div style={{ marginTop: '20px' }}>
           <div style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', background: '#fff' }}>
             {items.map((course) => {
@@ -41,10 +39,10 @@ export default function BasketPage() {
                   key={courseId}
                   style={{
                     display: 'flex',
-                    justify: 'space-between',
+                    justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '16px',
-                    borderBottom: '1px solid #e5e7eb'
+                    borderBottom: '1px solid #e5e7eb',
                   }}
                 >
                   <div>
@@ -65,7 +63,7 @@ export default function BasketPage() {
                       border: 'none',
                       borderRadius: '4px',
                       cursor: 'pointer',
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     }}
                   >
                     Xóa
@@ -84,7 +82,7 @@ export default function BasketPage() {
                 border: '1px solid #d1d5db',
                 borderRadius: '6px',
                 cursor: 'pointer',
-                fontWeight: '500'
+                fontWeight: '500',
               }}
             >
               Làm rỗng giỏ
@@ -100,7 +98,7 @@ export default function BasketPage() {
                 borderRadius: '6px',
                 cursor: 'pointer',
                 fontWeight: 'bold',
-                fontSize: '16px'
+                fontSize: '16px',
               }}
             >
               Xác nhận đăng ký ({itemCount} khóa học)

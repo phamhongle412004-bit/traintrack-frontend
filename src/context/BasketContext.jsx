@@ -1,62 +1,85 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { basketReducer, initialBasketState, BASKET_ACTION_TYPES } from '../reducers/basketReducer';
-
-const BASKET_STORAGE_KEY = 'traintrack_v1_basket';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const BasketContext = createContext(null);
 
+const BASKET_STORAGE_KEY = 'traintrack_basket';
+const ENROLMENTS_STORAGE_KEY = 'traintrack_my_enrolments';
+
 export function BasketProvider({ children }) {
-  const [state, dispatch] = useReducer(basketReducer, initialBasketState, (initial) => {
+  const [items, setItems] = useState(() => {
     try {
       const saved = localStorage.getItem(BASKET_STORAGE_KEY);
-      return saved ? { items: JSON.parse(saved) } : initial;
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return initial;
+      return [];
     }
   });
 
-  // Tự động lưu vết vào localStorage khi basket items thay đổi
+  const [enrolments, setEnrolments] = useState(() => {
+    try {
+      const saved = localStorage.getItem(ENROLMENTS_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
   useEffect(() => {
-    localStorage.setItem(BASKET_STORAGE_KEY, JSON.stringify(state.items));
-  }, [state.items]);
+    localStorage.setItem(BASKET_STORAGE_KEY, JSON.stringify(items));
+  }, [items]);
+
+  useEffect(() => {
+    localStorage.setItem(ENROLMENTS_STORAGE_KEY, JSON.stringify(enrolments));
+  }, [enrolments]);
 
   const addToBasket = (course) => {
-    dispatch({ type: BASKET_ACTION_TYPES.ITEM_ADDED, payload: course });
+    if (!course) return;
+    setItems((prevItems) => {
+      const courseId = course.id || course._id;
+      const exists = prevItems.some((item) => (item.id || item._id) === courseId);
+      if (exists) return prevItems;
+      return [...prevItems, course];
+    });
   };
 
   const removeFromBasket = (courseId) => {
-    dispatch({ type: BASKET_ACTION_TYPES.ITEM_REMOVED, payload: { id: courseId } });
+    setItems((prev) => prev.filter((item) => (item.id || item._id) !== courseId));
   };
 
   const clearBasket = () => {
-    dispatch({ type: BASKET_ACTION_TYPES.BASKET_CLEARED });
+    setItems([]);
   };
 
   const submitBasket = async () => {
     try {
-      const response = await fetch('/api/enrolments', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ courseIds: state.items.map((i) => i.id) }),
+      if (items.length === 0) return { success: false, error: 'Giỏ hàng trống' };
+
+      setEnrolments((prevEnrolments) => {
+        const updated = [...prevEnrolments];
+        items.forEach((item) => {
+          const id = item.id || item._id;
+          if (!updated.some((e) => (e.id || e._id) === id)) {
+            updated.push({ ...item, enrolledAt: new Date().toISOString() });
+          }
+        });
+        return updated;
       });
 
-      if (!response.ok) throw new Error('Đăng ký thất bại');
+      setItems([]);
+      localStorage.removeItem(BASKET_STORAGE_KEY);
 
-      // Submit giỏ hàng thành công mới làm rỗng giỏ
-      clearBasket();
       return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
     }
   };
 
-  const itemCount = state.items.length;
-
   return (
-    <BasketContext
+    <BasketContext.Provider
       value={{
-        items: state.items,
-        itemCount,
+        items,
+        itemCount: items.length,
+        enrolments,
         addToBasket,
         removeFromBasket,
         clearBasket,
@@ -64,14 +87,8 @@ export function BasketProvider({ children }) {
       }}
     >
       {children}
-    </BasketContext>
+    </BasketContext.Provider>
   );
 }
 
-export function useBasket() {
-  const context = useContext(BasketContext);
-  if (!context) {
-    throw new Error('useBasket phải được sử dụng bên trong BasketProvider');
-  }
-  return context;
-}
+export const useBasket = () => useContext(BasketContext);
