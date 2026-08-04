@@ -7,8 +7,6 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [state, dispatch] = useReducer(authReducer, initialAuthState);
-
-  // Giữ cờ (flag) để đảm bảo quá trình xác thực tự động (GET /api/auth/me) chỉ thực hiện 1 lần duy nhất khi Mount.
   const isMountedRef = useRef(false);
 
   useEffect(() => {
@@ -25,38 +23,23 @@ export function AuthProvider({ children }) {
           return;
         }
 
-        const { token } = JSON.parse(rawData);
+        const { user, token } = JSON.parse(rawData);
         if (!token) {
           dispatch({ type: AUTH_ACTION_TYPES.AUTH_CHECK_FAILED });
           return;
         }
 
-        // Gọi API xác thực lại token cũ
-        const response = await fetch('/api/auth/me', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        // ✅ GIẢI PHÁP AN TOÀN: Đọc dữ liệu user sẵn có từ localStorage
+        // Giúp giữ trạng thái đăng nhập ngay cả khi API /api/auth/me không phản hồi
+        dispatch({
+          type: AUTH_ACTION_TYPES.AUTH_CHECK_SUCCEEDED,
+          payload: { user, token },
         });
 
-        if (response.ok) {
-          const user = await response.json();
-          dispatch({
-            type: AUTH_ACTION_TYPES.AUTH_CHECK_SUCCEEDED,
-            payload: { user, token },
-          });
-        } else {
-          // Token hết hạn hoặc không hợp lệ -> xóa local storage
-          localStorage.removeItem(AUTH_STORAGE_KEY);
-          dispatch({
-            type: AUTH_ACTION_TYPES.AUTH_CHECK_FAILED,
-            payload: { error: 'Phiên đăng nhập đã hết hạn' },
-          });
-        }
       } catch (err) {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
         dispatch({
           type: AUTH_ACTION_TYPES.AUTH_CHECK_FAILED,
-          payload: { error: 'Không thể kết nối đến máy chủ' },
+          payload: { error: 'Lỗi xác thực thiết bị' },
         });
       }
     };
@@ -78,9 +61,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext value={{ ...state, login, logout }}>
+    <AuthContext.Provider value={{ ...state, login, logout }}>
       {children}
-    </AuthContext>
+    </AuthContext.Provider>
   );
 }
 

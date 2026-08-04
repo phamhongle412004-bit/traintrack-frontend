@@ -12,6 +12,12 @@ import { CourseDetailPage, CourseOverviewTab, CourseSyllabusTab } from './pages/
 import { LoginForm } from './components/LoginForm';
 import { CourseForm } from './components/CourseForm';
 
+// ✅ Import BasketPage thực sự từ folder pages (Đã xóa dummy component bị trùng)
+import BasketPage from './pages/BasketPage';
+
+// Context Hooks của Task 5
+import { useAuth } from './context/AuthContext';
+
 const LandingPage = () => (
   <div className="p-8 text-center space-y-4">
     <h1 className="text-3xl font-bold">Chào mừng tới TrainTrack</h1>
@@ -23,7 +29,6 @@ const LandingPage = () => (
   </div>
 );
 
-const BasketPage = () => <div className="p-8"><h2 className="text-xl font-bold">Giỏ đăng ký khóa học</h2></div>;
 const MyEnrolmentsPage = () => <div className="p-8"><h2 className="text-xl font-bold">Khóa học đã đăng ký</h2></div>;
 
 const AdminCoursesPage = () => (
@@ -46,15 +51,18 @@ const NotFoundPage = () => (
 );
 
 // --- A. Trang Đăng Nhập (/login) ---
-const LoginPageWrapper = ({ onLogin }) => {
+const LoginPageWrapper = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSuccess = () => {
-    // Giả lập lưu user Admin vào state khi login thành công
+    // Giả lập thông tin user
     const loggedUser = { name: 'Admin User', role: 'ADMIN' };
-    onLogin(loggedUser);
+    const fakeToken = 'mock_jwt_token_123';
+
+    login(loggedUser, fakeToken);
     alert('Đăng nhập thành công với quyền ADMIN!');
-    navigate('/admin/courses'); // Đăng nhập xong tự động qua trang quản lý Admin
+    navigate('/admin/courses');
   };
 
   return (
@@ -127,13 +135,14 @@ const AdminCourseEditPageWrapper = () => {
 };
 
 export default function App() {
-  const [user, setUser] = useState(null); // { name: string, role: 'STUDENT' | 'ADMIN' }
-  const [isLoading] = useState(false);
+  // Lấy state người dùng & trạng thái loading trực tiếp từ AuthContext (Task 5)
+  const { user, status, logout } = useAuth();
+  const isLoading = status === 'loading';
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout user={user} onLogout={() => setUser(null)} />}>
+        <Route path="/" element={<MainLayout user={user} onLogout={logout} />}>
           
           {/* Public Routes */}
           <Route index element={<LandingPage />} />
@@ -145,6 +154,7 @@ export default function App() {
             <Route path="syllabus" element={<CourseSyllabusTab />} />
           </Route>
 
+          {/* ✅ Hiển thị trang BasketPage thực thụ */}
           <Route path="basket" element={<BasketPage />} />
 
           {/* Guest Route: Đăng nhập */}
@@ -152,7 +162,7 @@ export default function App() {
             path="login" 
             element={
               <GuestRoute user={user} isLoading={isLoading}>
-                <LoginPageWrapper onLogin={(loggedUser) => setUser(loggedUser)} />
+                <LoginPageWrapper />
               </GuestRoute>
             } 
           />
