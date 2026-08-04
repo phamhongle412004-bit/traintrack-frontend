@@ -9,7 +9,7 @@ export default function LoginPage({ onLogin }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🟢 Đọc trang người dùng định vào trước khi bị đẩy sang /login
+  // Đọc trang người dùng định vào trước khi bị đẩy sang /login
   const fromPath = location.state?.from?.pathname || '/';
 
   const handleSubmit = async (e) => {
@@ -21,7 +21,7 @@ export default function LoginPage({ onLogin }) {
       const loggedInUser = await onLogin(username, password);
 
       if (loggedInUser) {
-        // 🟢 Đăng nhập thành công -> Điều hướng về đúng trang người dùng định truy cập trước đó
+        // Đăng nhập thành công -> Điều hướng về đúng trang người dùng định truy cập trước đó
         navigate(fromPath, { replace: true });
       }
     } catch (err) {

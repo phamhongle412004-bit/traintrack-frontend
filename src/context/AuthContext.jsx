@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
           return;
         }
 
-        // ✅ GIẢI PHÁP AN TOÀN: Đọc dữ liệu user sẵn có từ localStorage
+        // GIẢI PHÁP AN TOÀN: Đọc dữ liệu user sẵn có từ localStorage
         // Giúp giữ trạng thái đăng nhập ngay cả khi API /api/auth/me không phản hồi
         dispatch({
           type: AUTH_ACTION_TYPES.AUTH_CHECK_SUCCEEDED,

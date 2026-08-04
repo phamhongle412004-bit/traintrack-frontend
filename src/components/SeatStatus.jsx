@@ -1,5 +1,4 @@
 export function SeatStatus({ seatsTotal, seatsTaken }) {
-  // 🟢 Sửa: seatsTotal và seatsTaken
   const remaining = seatsTotal - seatsTaken;
   const isSoldOut = remaining <= 0;
 
