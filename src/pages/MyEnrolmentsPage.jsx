@@ -1,6 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useBasket } from '../context/BasketContext';
+
+// Import useBasket từ file App.jsx (nếu bạn export từ App.jsx) 
+// Hoặc giữ nguyên pathimport của bạn nếu dùng file riêng
+import { useBasket } from '../App'; 
 
 export default function MyEnrolmentsPage() {
   const { enrolments } = useBasket();
@@ -21,10 +24,12 @@ export default function MyEnrolmentsPage() {
       ) : (
         <div style={{ display: 'grid', gap: '12px', marginTop: '16px' }}>
           {enrolments.map((course, index) => {
-            const courseId = course.id || course._id || index;
+            // Đảm bảo luôn lấy đúng ID dạng chuỗi/số của khóa học
+            const realId = course.id ?? course._id;
+
             return (
               <div
-                key={courseId}
+                key={realId || index}
                 style={{
                   padding: '16px',
                   background: '#fff',
@@ -37,26 +42,34 @@ export default function MyEnrolmentsPage() {
               >
                 <div>
                   <h3 style={{ margin: '0 0 4px 0', fontSize: '18px', color: '#111827' }}>
-                    {course.title || course.name}
+                    {course.title || course.name || `Khóa học #${index + 1}`}
                   </h3>
                   <p style={{ margin: 0, fontSize: '14px', color: '#16a34a', fontWeight: '600' }}>
                     ✓ Đã đăng ký thành công
                   </p>
                 </div>
-                <Link
-                  to={`/courses/${courseId}`}
-                  style={{
-                    padding: '8px 16px',
-                    background: '#2563eb',
-                    color: '#fff',
-                    borderRadius: '6px',
-                    textDecoration: 'none',
-                    fontSize: '14px',
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Vào học ngay
-                </Link>
+
+                {/* Điều hướng tuyệt đối chính xác tới /courses/:courseId */}
+                {realId ? (
+                  <Link
+                    to={`/courses/${realId}`}
+                    style={{
+                      padding: '8px 16px',
+                      background: '#2563eb',
+                      color: '#fff',
+                      borderRadius: '6px',
+                      textDecoration: 'none',
+                      fontSize: '14px',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    Vào học ngay
+                  </Link>
+                ) : (
+                  <span style={{ fontSize: '12px', color: '#ef4444' }}>
+                    Lỗi: Khóa học thiếu ID
+                  </span>
+                )}
               </div>
             );
           })}
