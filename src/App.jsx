@@ -156,6 +156,7 @@ const NotFoundPage = () => (
 
 const LoginPageWrapper = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useAuth();
 
   const handleSuccess = () => {
@@ -163,8 +164,8 @@ const LoginPageWrapper = () => {
     const fakeToken = 'mock_jwt_token_123';
 
     login(loggedUser, fakeToken);
-    alert('Đăng nhập thành công với quyền ADMIN!');
-    navigate('/admin/courses');
+    const from = location.state?.from?.pathname || '/admin/courses';
+    navigate(from, { replace: true });
   };
 
   return (
@@ -242,72 +243,69 @@ export default function App() {
   const isLoading = status === 'loading';
 
   return (
-  <BasketProvider>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout user={user} onLogout={logout} />}>
-          
-          {/* Trang chủ */}
-          <Route index element={<LandingPage />} />
+    <BasketProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<MainLayout user={user} onLogout={logout} />}>
+            
+            {/* Trang chủ */}
+            <Route index element={<LandingPage />} />
 
-          {/* GOM NÓM TẤT CẢ ROUTE COURSES */}
-          <Route path="courses">
-            {/* Đường dẫn /courses -> Danh mục */}
-            <Route index element={<CataloguePage />} />
+            {/* Danh mục tất cả khóa học */}
+            <Route path="courses" element={<CataloguePage />} />
 
-            {/* Đường dẫn /courses/:courseId -> Chi tiết khóa học */}
-            <Route path=":courseId" element={<CourseDetailPage />}>
+            {/* Chi tiết từng khóa học - Sử dụng Nested Routes chính xác */}
+            <Route path="courses/:courseId" element={<CourseDetailPage />}>
               <Route index element={<CourseOverviewTab />} />
               <Route path="syllabus" element={<CourseSyllabusTab />} />
             </Route>
+
+            {/* Giỏ hàng & Khóa học đã đăng ký */}
+            <Route path="basket" element={<BasketPage />} />
+            <Route path="my-enrolments" element={<MyEnrolmentsPage />} />
+
+            {/* Đăng nhập */}
+            <Route 
+              path="login" 
+              element={
+                <GuestRoute user={user} isLoading={isLoading}>
+                  <LoginPageWrapper />
+                </GuestRoute>
+              } 
+            />
+
+            {/* Admin Routes */}
+            <Route 
+              path="admin/courses" 
+              element={
+                <AdminRoute user={user} isLoading={isLoading}>
+                  <AdminCoursesPage />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="admin/courses/new" 
+              element={
+                <AdminRoute user={user} isLoading={isLoading}>
+                  <AdminCourseNewPageWrapper />
+                </AdminRoute>
+              } 
+            />
+            <Route 
+              path="admin/courses/:courseId/edit" 
+              element={
+                <AdminRoute user={user} isLoading={isLoading}>
+                  <AdminCourseEditPageWrapper />
+                </AdminRoute>
+              } 
+            />
+
+            {/* Trang 404 */}
+            <Route path="*" element={<NotFoundPage />} />
+
           </Route>
-
-          {/* Giỏ hàng & Khóa học đã đăng ký */}
-          <Route path="basket" element={<BasketPage />} />
-          <Route path="my-enrolments" element={<MyEnrolmentsPage />} />
-
-          {/* Đăng nhập */}
-          <Route 
-            path="login" 
-            element={
-              <GuestRoute user={user} isLoading={isLoading}>
-                <LoginPageWrapper />
-              </GuestRoute>
-            } 
-          />
-
-          {/* Admin Routes */}
-          <Route 
-            path="admin/courses" 
-            element={
-              <AdminRoute user={user} isLoading={isLoading}>
-                <AdminCoursesPage />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="admin/courses/new" 
-            element={
-              <AdminRoute user={user} isLoading={isLoading}>
-                <AdminCourseNewPageWrapper />
-              </AdminRoute>
-            } 
-          />
-          <Route 
-            path="admin/courses/:courseId/edit" 
-            element={
-              <AdminRoute user={user} isLoading={isLoading}>
-                <AdminCourseEditPageWrapper />
-              </AdminRoute>
-            } 
-          />
-
-          {/* Trang 404 */}
-          <Route path="*" element={<NotFoundPage />} />
-
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </BasketProvider>
-);
+        </Routes>
+      </BrowserRouter>
+    </BasketProvider>
+  );
 }
