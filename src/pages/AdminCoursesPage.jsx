@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getCoursesApi, deleteCourseApi } from '../api/courses';
+import { Link } from 'react-router-dom'; // 💡 Bổ sung Link để chuyển trang
+import { getCourses as getCoursesApi, deleteCourse as deleteCourseApi } from '../api/courses';
 import { AsyncDataWrapper } from '../components/AsyncDataWrapper';
 
 export default function AdminCoursesPage() {
@@ -18,7 +19,7 @@ export default function AdminCoursesPage() {
       })
       .catch((err) => {
         if (err.name === 'AbortError') return;
-        setError(err.message);
+        setError(err.message || 'Không thể kết nối đến máy chủ');
         setLoading(false);
       });
   }, []);
@@ -36,8 +37,8 @@ export default function AdminCoursesPage() {
 
     try {
       await deleteCourseApi(courseId);
-      // Cập nhật UI ngay lập tức sau khi xóa thành công trên API
-      setCourses((prev) => prev.filter((c) => c.id !== courseId));
+      // 💡 Sửa: Hỗ trợ cả id lẫn _id
+      setCourses((prev) => prev.filter((c) => (c.id || c._id) !== courseId));
     } catch (err) {
       if (err.status === 409) {
         setActionError('Không thể xóa khóa học này vì đã có học viên đăng ký!');
@@ -48,15 +49,26 @@ export default function AdminCoursesPage() {
   };
 
   return (
-    <div>
-      <h2>⚙️ [Admin] Quản lý khóa học</h2>
+    <div style={{ padding: '24px' }}>
+      {/* HEADER: Tiêu đề + Nút Tạo mới */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2>⚙️ [Admin] Quản lý khóa học</h2>
+        <Link 
+          to="/admin/courses/new" 
+          style={{ background: '#16a34a', color: '#fff', padding: '8px 16px', borderRadius: '4px', textDecoration: 'none', fontWeight: 'bold' }}
+        >
+          + Thêm khóa học mới
+        </Link>
+      </div>
 
+      {/* Thông báo lỗi thao tác (Action Error) */}
       {actionError && (
         <div style={{ padding: '12px', background: '#fee2e2', color: '#b91c1c', borderRadius: '4px', marginBottom: '16px' }}>
           ⚠️ {actionError}
         </div>
       )}
 
+      {/* WRAPPER RENDER 4 TRẠNG THÁI */}
       <AsyncDataWrapper 
         loading={loading} 
         error={error} 
@@ -73,21 +85,33 @@ export default function AdminCoursesPage() {
             </tr>
           </thead>
           <tbody>
-            {courses.map((course) => (
-              <tr key={course.id}>
-                <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>{course.id}</td>
-                <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>{course.title}</td>
-                <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>${course.price}</td>
-                <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>
-                  <button 
-                    onClick={() => handleDelete(course.id, course.title)} 
-                    style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer' }}
-                  >
-                    Xóa
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {courses.map((course) => {
+              const targetId = course.id || course._id;
+              return (
+                <tr key={targetId}>
+                  <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>{targetId}</td>
+                  <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>{course.title}</td>
+                  <td style={{ padding: '12px', border: '1px solid #cbd5e1' }}>${course.price}</td>
+                  <td style={{ padding: '12px', border: '1px solid #cbd5e1', gap: '8px', display: 'flex' }}>
+                    {/* Nút Chỉnh sửa */}
+                    <Link 
+                      to={`/admin/courses/${targetId}/edit`}
+                      style={{ background: '#2563eb', color: '#fff', padding: '6px 12px', borderRadius: '4px', textDecoration: 'none', fontSize: '14px' }}
+                    >
+                      Sửa
+                    </Link>
+
+                    {/* Nút Xóa */}
+                    <button 
+                      onClick={() => handleDelete(targetId, course.title)} 
+                      style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', fontSize: '14px' }}
+                    >
+                      Xóa
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </AsyncDataWrapper>

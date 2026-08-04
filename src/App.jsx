@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useParams, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useParams, Link, useLocation } from 'react-router-dom';
 
 import { MainLayout } from './layouts/MainLayout';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -16,6 +16,14 @@ import BasketPage from './pages/BasketPage';
 import MyEnrolmentsPage from './pages/MyEnrolmentsPage';
 
 import { useAuth } from './context/AuthContext';
+
+// Import tập trung các hàm API chuẩn từ file api/courses.js
+import { 
+  getCourseById, 
+  createCourse, 
+  updateCourse, 
+  getInstructors 
+} from './api/courses';
 
 // ==========================================
 // 1. BASKET CONTEXT
@@ -122,7 +130,7 @@ export function BasketProvider({ children }) {
 export const useBasket = () => useContext(BasketContext);
 
 // ==========================================
-// 2. PAGES
+// 2. PAGES & WRAPPERS
 // ==========================================
 const LandingPage = () => (
   <div className="p-8 text-center space-y-4">
@@ -175,30 +183,54 @@ const LoginPageWrapper = () => {
   );
 };
 
+// 🌟 Wrapper Tạo khóa học mới (Đã sửa dùng API helper)
 const AdminCourseNewPageWrapper = () => {
   const [instructors, setInstructors] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/instructors')
-      .then((res) => res.json())
-      .then((data) => setInstructors(data))
-      .catch((err) => console.error('Lỗi khi tải danh sách giảng viên:', err));
+    const controller = new AbortController();
+
+    getInstructors(controller.signal)
+      .then((data) => {
+        setInstructors(data || []);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Lỗi khi tải danh sách giảng viên:', err);
+        }
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, []);
+
+  const handleCreateCourse = async (formData) => {
+    try {
+      await createCourse(formData);
+      alert('Tạo khóa học thành công!');
+      navigate('/admin/courses');
+    } catch (err) {
+      alert(`Lỗi khi tạo khóa học: ${err.message}`);
+    }
+  };
+
+  if (loading) {
+    return <div className="p-8 text-center text-gray-500">Đang tải dữ liệu...</div>;
+  }
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
       <CourseForm 
         instructors={instructors} 
-        onSubmitSuccess={() => {
-          alert('Tạo khóa học thành công!');
-          navigate('/admin/courses');
-        }} 
+        onSubmit={handleCreateCourse} 
       />
     </div>
   );
 };
 
+// 🌟 Wrapper Cập nhật khóa học (Đã sửa dùng API helper)
 const AdminCourseEditPageWrapper = () => {
   const { courseId } = useParams();
   const [course, setCourse] = useState(null);
@@ -207,17 +239,35 @@ const AdminCourseEditPageWrapper = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const controller = new AbortController();
+
     Promise.all([
-      fetch(`http://localhost:3001/api/courses/${courseId}`).then((r) => r.json()),
-      fetch('http://localhost:3001/api/instructors').then((r) => r.json())
+      getCourseById(courseId, controller.signal),
+      getInstructors(controller.signal)
     ])
-    .then(([courseData, instructorsData]) => {
-      setCourse(courseData);
-      setInstructors(instructorsData);
-    })
-    .catch((err) => console.error('Lỗi khi tải dữ liệu sửa khóa học:', err))
-    .finally(() => setLoading(false));
+      .then(([courseData, instructorsData]) => {
+        setCourse(courseData);
+        setInstructors(instructorsData || []);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Lỗi khi tải dữ liệu sửa khóa học:', err);
+        }
+      })
+      .finally(() => setLoading(false));
+
+    return () => controller.abort();
   }, [courseId]);
+
+  const handleUpdateCourse = async (formData) => {
+    try {
+      await updateCourse(courseId, formData);
+      alert('Cập nhật khóa học thành công!');
+      navigate('/admin/courses');
+    } catch (err) {
+      alert(`Lỗi khi cập nhật khóa học: ${err.message}`);
+    }
+  };
 
   if (loading) return <div className="p-8 text-center text-gray-500">Đang tải thông tin khóa học...</div>;
 
@@ -226,10 +276,7 @@ const AdminCourseEditPageWrapper = () => {
       <CourseForm 
         initialData={course} 
         instructors={instructors} 
-        onSubmitSuccess={() => {
-          alert('Cập nhật khóa học thành công!');
-          navigate('/admin/courses');
-        }} 
+        onSubmit={handleUpdateCourse} 
       />
     </div>
   );
@@ -254,7 +301,7 @@ export default function App() {
             {/* Danh mục tất cả khóa học */}
             <Route path="courses" element={<CataloguePage />} />
 
-            {/* Chi tiết từng khóa học - Sử dụng Nested Routes chính xác */}
+            {/* Chi tiết từng khóa học - Nested Routes */}
             <Route path="courses/:courseId" element={<CourseDetailPage />}>
               <Route index element={<CourseOverviewTab />} />
               <Route path="syllabus" element={<CourseSyllabusTab />} />
