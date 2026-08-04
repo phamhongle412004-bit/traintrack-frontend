@@ -1,0 +1,291 @@
+{
+  "info": {
+    "_postman_id": "d36b0f7c-157a-40e4-a048-bff361416df8",
+    "name": "TrainTrack_App",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56906311",
+    "_collection_link": "https://go.postman.co/collection/56906311-d36b0f7c-157a-40e4-a048-bff361416df8?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "postman-echo.com/get",
+          "host": [
+            "postman-echo",
+            "com"
+          ],
+          "path": [
+            "get"
+          ]
+        },
+        "description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+      },
+      "response": []
+    },
+    {
+      "name": "Post data",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"Successful POST request\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              ""
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"name\": \"Add your name in the body\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "postman-echo.com/post",
+          "host": [
+            "postman-echo",
+            "com"
+          ],
+          "path": [
+            "post"
+          ]
+        },
+        "description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+      },
+      "response": []
+    },
+    {
+      "name": "Get Courses",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": [
+        {
+          "name": "Get Courses",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "http://localhost:5173"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "Content-Type,Authorization"
+            },
+            {
+              "key": "Access-Control-Max-Age",
+              "value": "600"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Date",
+              "value": "Tue, 04 Aug 2026 02:16:20 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n    {\n        \"id\": 1,\n        \"title\": \"React Fundamentals\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 40,\n        \"price\": 199,\n        \"instructorId\": 1,\n        \"seatsTotal\": 30,\n        \"seatsTaken\": 12,\n        \"summary\": \"Components, JSX, props, state, and events. The foundation for every other React course in the catalogue.\",\n        \"syllabus\": [\n            \"Thinking in components\",\n            \"JSX and the Virtual DOM\",\n            \"Props and one-way data flow\",\n            \"State and event handling\",\n            \"Rendering lists and conditionals\"\n        ],\n        \"imageUrl\": \"/img/react-fundamentals.png\"\n    },\n    {\n        \"id\": 2,\n        \"title\": \"Advanced React Patterns\",\n        \"level\": \"ADVANCED\",\n        \"durationHours\": 32,\n        \"price\": 349,\n        \"instructorId\": 1,\n        \"seatsTotal\": 20,\n        \"seatsTaken\": 20,\n        \"summary\": \"Compound components, render props, higher-order components, and the patterns behind popular React libraries.\",\n        \"syllabus\": [\n            \"Composition over configuration\",\n            \"Render props\",\n            \"Higher-order components\",\n            \"Compound components\",\n            \"Reading library source code\"\n        ],\n        \"imageUrl\": \"/img/advanced-react.png\"\n    },\n    {\n        \"id\": 3,\n        \"title\": \"TypeScript for React Developers\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 24,\n        \"price\": 249,\n        \"instructorId\": 1,\n        \"seatsTotal\": 25,\n        \"seatsTaken\": 9,\n        \"summary\": \"Type the props, state, hooks, and events of a real React application without fighting the compiler.\",\n        \"syllabus\": [\n            \"Structural typing\",\n            \"Typing props and children\",\n            \"Generics in components\",\n            \"Typing hooks\",\n            \"Discriminated unions for state\"\n        ],\n        \"imageUrl\": \"/img/ts-react.png\"\n    },\n    {\n        \"id\": 4,\n        \"title\": \"Java Programming Essentials\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 60,\n        \"price\": 179,\n        \"instructorId\": 2,\n        \"seatsTotal\": 40,\n        \"seatsTaken\": 31,\n        \"summary\": \"Syntax, control flow, classes, and objects for developers writing their first Java code.\",\n        \"syllabus\": [\n            \"Types and control flow\",\n            \"Classes and objects\",\n            \"Collections\",\n            \"Exceptions\",\n            \"File I/O\"\n        ],\n        \"imageUrl\": \"/img/java-essentials.png\"\n    },\n    {\n        \"id\": 5,\n        \"title\": \"Object-Oriented Design in Java\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 36,\n        \"price\": 279,\n        \"instructorId\": 2,\n        \"seatsTotal\": 28,\n        \"seatsTaken\": 14,\n        \"summary\": \"Encapsulation, inheritance, polymorphism, and the design principles that keep a codebase changeable.\",\n        \"syllabus\": [\n            \"SOLID principles\",\n            \"Composition vs inheritance\",\n            \"Interfaces and abstraction\",\n            \"Design patterns in practice\",\n            \"Refactoring legacy code\"\n        ],\n        \"imageUrl\": \"/img/oo-java.png\"\n    },\n    {\n        \"id\": 6,\n        \"title\": \"Spring Boot REST APIs\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 48,\n        \"price\": 329,\n        \"instructorId\": 2,\n        \"seatsTotal\": 30,\n        \"seatsTaken\": 27,\n        \"summary\": \"Build, validate, secure, and test a production-shaped REST API with Spring Boot.\",\n        \"syllabus\": [\n            \"Controllers and routing\",\n            \"Validation and error handling\",\n            \"Spring Data JPA\",\n            \"Security and JWT\",\n            \"Testing the web layer\"\n        ],\n        \"imageUrl\": \"/img/spring-rest.png\"\n    },\n    {\n        \"id\": 7,\n        \"title\": \"Spring Security in Depth\",\n        \"level\": \"ADVANCED\",\n        \"durationHours\": 28,\n        \"price\": 399,\n        \"instructorId\": 5,\n        \"seatsTotal\": 18,\n        \"seatsTaken\": 6,\n        \"summary\": \"Filter chains, authentication providers, method security, and token strategies beyond the defaults.\",\n        \"syllabus\": [\n            \"The filter chain\",\n            \"Authentication providers\",\n            \"Method-level security\",\n            \"OAuth2 and OIDC\",\n            \"Token storage trade-offs\"\n        ],\n        \"imageUrl\": \"/img/spring-security.png\"\n    },\n    {\n        \"id\": 8,\n        \"title\": \"SQL for Application Developers\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 30,\n        \"price\": 149,\n        \"instructorId\": 3,\n        \"seatsTotal\": 35,\n        \"seatsTaken\": 22,\n        \"summary\": \"Write the queries an application actually needs, and understand what the database does with them.\",\n        \"syllabus\": [\n            \"SELECT and filtering\",\n            \"Joins\",\n            \"Aggregation and grouping\",\n            \"Subqueries\",\n            \"Reading a query plan\"\n        ],\n        \"imageUrl\": \"/img/sql-basics.png\"\n    },\n    {\n        \"id\": 9,\n        \"title\": \"Database Design & Normalisation\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 26,\n        \"price\": 229,\n        \"instructorId\": 3,\n        \"seatsTotal\": 24,\n        \"seatsTaken\": 24,\n        \"summary\": \"Model a domain into tables that stay correct as requirements change.\",\n        \"syllabus\": [\n            \"Entity-relationship modelling\",\n            \"Normal forms\",\n            \"Keys and constraints\",\n            \"Indexing strategy\",\n            \"When to denormalise\"\n        ],\n        \"imageUrl\": \"/img/db-design.png\"\n    },\n    {\n        \"id\": 10,\n        \"title\": \"Data Structures & Algorithms\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 45,\n        \"price\": 299,\n        \"instructorId\": 3,\n        \"seatsTotal\": 30,\n        \"seatsTaken\": 18,\n        \"summary\": \"The structures and algorithms that appear in real systems and in every technical interview.\",\n        \"syllabus\": [\n            \"Complexity analysis\",\n            \"Arrays, lists, and maps\",\n            \"Trees and graphs\",\n            \"Sorting and searching\",\n            \"Dynamic programming\"\n        ],\n        \"imageUrl\": \"/img/dsa.png\"\n    },\n    {\n        \"id\": 11,\n        \"title\": \"Docker for Developers\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 20,\n        \"price\": 159,\n        \"instructorId\": 4,\n        \"seatsTotal\": 32,\n        \"seatsTaken\": 11,\n        \"summary\": \"Package an application and its dependencies so it runs the same way everywhere.\",\n        \"syllabus\": [\n            \"Images and layers\",\n            \"Writing a Dockerfile\",\n            \"Volumes and networking\",\n            \"Docker Compose\",\n            \"Image size and security\"\n        ],\n        \"imageUrl\": \"/img/docker.png\"\n    },\n    {\n        \"id\": 12,\n        \"title\": \"Kubernetes Operations\",\n        \"level\": \"ADVANCED\",\n        \"durationHours\": 40,\n        \"price\": 449,\n        \"instructorId\": 4,\n        \"seatsTotal\": 16,\n        \"seatsTaken\": 16,\n        \"summary\": \"Deploy, scale, observe, and debug workloads on a real cluster.\",\n        \"syllabus\": [\n            \"Pods, deployments, services\",\n            \"Configuration and secrets\",\n            \"Autoscaling\",\n            \"Observability\",\n            \"Debugging a failing rollout\"\n        ],\n        \"imageUrl\": \"/img/kubernetes.png\"\n    },\n    {\n        \"id\": 13,\n        \"title\": \"CI/CD with GitHub Actions\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 18,\n        \"price\": 189,\n        \"instructorId\": 4,\n        \"seatsTotal\": 30,\n        \"seatsTaken\": 7,\n        \"summary\": \"Automate build, test, and deployment so shipping stops being an event.\",\n        \"syllabus\": [\n            \"Workflow syntax\",\n            \"Matrix builds\",\n            \"Caching\",\n            \"Secrets and environments\",\n            \"Deployment strategies\"\n        ],\n        \"imageUrl\": \"/img/cicd.png\"\n    },\n    {\n        \"id\": 14,\n        \"title\": \"Git Beyond the Basics\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 12,\n        \"price\": 99,\n        \"instructorId\": 4,\n        \"seatsTotal\": 40,\n        \"seatsTaken\": 33,\n        \"summary\": \"Rebase, bisect, reflog, and the mental model that makes Git stop being frightening.\",\n        \"syllabus\": [\n            \"The object model\",\n            \"Branching strategies\",\n            \"Interactive rebase\",\n            \"Bisect and reflog\",\n            \"Recovering from mistakes\"\n        ],\n        \"imageUrl\": \"/img/git.png\"\n    },\n    {\n        \"id\": 15,\n        \"title\": \"Web Accessibility Essentials\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 16,\n        \"price\": 129,\n        \"instructorId\": 1,\n        \"seatsTotal\": 35,\n        \"seatsTaken\": 5,\n        \"summary\": \"Build interfaces that work with a keyboard, a screen reader, and imperfect eyesight.\",\n        \"syllabus\": [\n            \"Semantic HTML\",\n            \"Keyboard navigation\",\n            \"ARIA in practice\",\n            \"Colour and contrast\",\n            \"Testing with a screen reader\"\n        ],\n        \"imageUrl\": \"/img/a11y.png\"\n    },\n    {\n        \"id\": 16,\n        \"title\": \"Secure Coding Practices\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 22,\n        \"price\": 269,\n        \"instructorId\": 5,\n        \"seatsTotal\": 26,\n        \"seatsTaken\": 13,\n        \"summary\": \"Recognise and close the vulnerability classes that appear most often in application code.\",\n        \"syllabus\": [\n            \"Injection\",\n            \"Broken authentication\",\n            \"Cross-site scripting\",\n            \"Access control failures\",\n            \"Dependency risk\"\n        ],\n        \"imageUrl\": \"/img/secure-coding.png\"\n    },\n    {\n        \"id\": 17,\n        \"title\": \"Threat Modelling Workshop\",\n        \"level\": \"ADVANCED\",\n        \"durationHours\": 14,\n        \"price\": 359,\n        \"instructorId\": 5,\n        \"seatsTotal\": 14,\n        \"seatsTaken\": 4,\n        \"summary\": \"Find design-level security problems before any code is written.\",\n        \"syllabus\": [\n            \"Data flow diagrams\",\n            \"STRIDE\",\n            \"Attack trees\",\n            \"Prioritising mitigations\",\n            \"Running a session with your team\"\n        ],\n        \"imageUrl\": \"/img/threat-modelling.png\"\n    },\n    {\n        \"id\": 18,\n        \"title\": \"Testing JavaScript Applications\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 28,\n        \"price\": 239,\n        \"instructorId\": 1,\n        \"seatsTotal\": 28,\n        \"seatsTaken\": 16,\n        \"summary\": \"Unit, integration, and end-to-end testing that catches real regressions instead of restating the code.\",\n        \"syllabus\": [\n            \"What to test\",\n            \"Testing pure logic\",\n            \"Testing components\",\n            \"Mocking the network\",\n            \"End-to-end flows\"\n        ],\n        \"imageUrl\": \"/img/js-testing.png\"\n    },\n    {\n        \"id\": 19,\n        \"title\": \"Performance Engineering for the Web\",\n        \"level\": \"ADVANCED\",\n        \"durationHours\": 24,\n        \"price\": 379,\n        \"instructorId\": 1,\n        \"seatsTotal\": 20,\n        \"seatsTaken\": 8,\n        \"summary\": \"Measure first. Then fix the thing that is actually slow.\",\n        \"syllabus\": [\n            \"Core Web Vitals\",\n            \"Profiling the main thread\",\n            \"Bundle analysis\",\n            \"Rendering performance\",\n            \"Network and caching\"\n        ],\n        \"imageUrl\": \"/img/web-perf.png\"\n    },\n    {\n        \"id\": 20,\n        \"title\": \"Agile Delivery with Scrum\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 16,\n        \"price\": 119,\n        \"instructorId\": 2,\n        \"seatsTotal\": 45,\n        \"seatsTaken\": 29,\n        \"summary\": \"Roles, events, and artefacts — and the habits that make them work rather than become theatre.\",\n        \"syllabus\": [\n            \"Roles and responsibilities\",\n            \"Backlog refinement\",\n            \"Sprint planning\",\n            \"Review and retrospective\",\n            \"Common anti-patterns\"\n        ],\n        \"imageUrl\": \"/img/scrum.png\"\n    },\n    {\n        \"id\": 21,\n        \"title\": \"Clean Code & Refactoring\",\n        \"level\": \"INTERMEDIATE\",\n        \"durationHours\": 20,\n        \"price\": 209,\n        \"instructorId\": 2,\n        \"seatsTotal\": 30,\n        \"seatsTaken\": 10,\n        \"summary\": \"Make code readable on purpose, and change it safely once it is.\",\n        \"syllabus\": [\n            \"Naming\",\n            \"Function design\",\n            \"Code smells\",\n            \"Refactoring safely\",\n            \"Reviewing other people's code\"\n        ],\n        \"imageUrl\": \"/img/clean-code.png\"\n    },\n    {\n        \"id\": 22,\n        \"title\": \"Analytics with Python & Pandas\",\n        \"level\": \"BEGINNER\",\n        \"durationHours\": 34,\n        \"price\": 189,\n        \"instructorId\": 3,\n        \"seatsTotal\": 30,\n        \"seatsTaken\": 3,\n        \"summary\": \"Load, clean, reshape, and summarise real datasets without leaving Python.\",\n        \"syllabus\": [\n            \"Series and DataFrames\",\n            \"Cleaning messy data\",\n            \"Grouping and aggregation\",\n            \"Joins and reshaping\",\n            \"Plotting results\"\n        ],\n        \"imageUrl\": \"/img/pandas.png\"\n    }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Get Instructors",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": [
+        {
+          "name": "Get Instructors",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instructors",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instructors"
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "http://localhost:5173"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "Content-Type,Authorization"
+            },
+            {
+              "key": "Access-Control-Max-Age",
+              "value": "600"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Date",
+              "value": "Tue, 04 Aug 2026 02:19:55 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            }
+          ],
+          "cookie": [],
+          "body": "[\n    {\n        \"id\": 1,\n        \"fullName\": \"Nguyen Minh Anh\",\n        \"title\": \"Senior Frontend Engineer\",\n        \"bio\": \"Twelve years building product UIs. Teaches React, accessibility, and design systems.\"\n    },\n    {\n        \"id\": 2,\n        \"fullName\": \"Tran Quoc Bao\",\n        \"title\": \"Principal Backend Engineer\",\n        \"bio\": \"Distributed systems and JVM performance. Former platform lead at a payments company.\"\n    },\n    {\n        \"id\": 3,\n        \"fullName\": \"Le Thi Cam Tu\",\n        \"title\": \"Data Engineering Lead\",\n        \"bio\": \"Builds analytics pipelines at scale. Focuses on SQL, modelling, and data quality.\"\n    },\n    {\n        \"id\": 4,\n        \"fullName\": \"Pham Duc Duy\",\n        \"title\": \"Cloud & DevOps Architect\",\n        \"bio\": \"Container platforms, CI/CD, and observability. Certified on three major clouds.\"\n    },\n    {\n        \"id\": 5,\n        \"fullName\": \"Hoang Gia Han\",\n        \"title\": \"Security Engineer\",\n        \"bio\": \"Application security and threat modelling. Runs the internal secure-coding programme.\"\n    }\n]"
+        }
+      ]
+    },
+    {
+      "name": "Get Non Existing Course",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": [
+        {
+          "name": "Get Non Existing Course",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/invalid-id-999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "courses",
+                "invalid-id-999"
+              ]
+            }
+          },
+          "status": "Not Found",
+          "code": 404,
+          "_postman_previewlanguage": null,
+          "header": [
+            {
+              "key": "Access-Control-Allow-Origin",
+              "value": "http://localhost:5173"
+            },
+            {
+              "key": "Access-Control-Allow-Methods",
+              "value": "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+            },
+            {
+              "key": "Access-Control-Allow-Headers",
+              "value": "Content-Type,Authorization"
+            },
+            {
+              "key": "Access-Control-Max-Age",
+              "value": "600"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "Date",
+              "value": "Tue, 04 Aug 2026 02:21:24 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            },
+            {
+              "key": "Transfer-Encoding",
+              "value": "chunked"
+            }
+          ],
+          "cookie": [],
+          "body": "{\n    \"message\": \"No route for GET /api/courses/invalid-id-999\"\n}"
+        }
+      ]
+    }
+  ]
+}
