@@ -78,7 +78,7 @@ export default function CataloguePage() {
 
   return (
     <div className="catalogue-container">
-      <h2>📚 Danh Mục Khóa Học</h2>
+      <h2> Danh Mục Khóa Học</h2>
 
       {/* Thanh công cụ Tìm kiếm & Bộ lọc */}
       <div className="toolbar" style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
