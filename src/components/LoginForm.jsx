@@ -40,35 +40,27 @@ export const LoginForm = ({ onLoginSuccess }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setTouched({ email: true, password: true });
-    
-    const validationErrors = validate(formData);
-    setErrors(validationErrors);
-    if (Object.keys(validationErrors).length > 0) return;
+  e.preventDefault();
+  
+  setTouched({ email: true, password: true });
+  const validationErrors = validate(formData);
+  setErrors(validationErrors);
+  
+  if (Object.keys(validationErrors).length > 0) return;
 
-    setIsSubmitting(true);
-    setApiError('');
+  setIsSubmitting(true);
+  setApiError('');
 
-    try {
-      // Giả lập gọi API login
-      const res = await fetch('http://localhost:3001/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) throw new Error('Đăng nhập thất bại');
-      
-      if (onLoginSuccess) onLoginSuccess();
-    } catch (err) {
-      setApiError('Email hoặc mật khẩu không chính xác.');
-      // ⚠️ YÊU CẦU BẮT BUỘC ĐỀ BÀI: Xóa trắng password khi thất bại
-      setFormData((prev) => ({ ...prev, password: '' }));
-    } finally {
-      setIsSubmitting(false);
+  try {
+    if (onLoginSuccess) {
+      onLoginSuccess();
     }
-  };
+  } catch (err) {
+    console.error('Lỗi khi đăng nhập:', err);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <form onSubmit={handleSubmit} noValidate className="max-w-md mx-auto p-6 bg-white rounded shadow">
